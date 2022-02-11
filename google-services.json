@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "282476825704",
+    "firebase_url": "https://keylogger-db.firebaseio.com",
+    "project_id": "keylogger-db",
+    "storage_bucket": "keylogger-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282476825704:android:f3e356b79813925d7d3fdd",
+        "android_client_info": {
+          "package_name": "com.malware.KeyLogger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "282476825704-989e1vpgs8h7qipepm760c8fmdmfamvr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbXh9-urHIJbciqDdF-z7YK-w--IvY0Cc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "282476825704-989e1vpgs8h7qipepm760c8fmdmfamvr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
