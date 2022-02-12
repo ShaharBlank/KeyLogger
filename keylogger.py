@@ -60,15 +60,6 @@ def on_press(key):
         printKey(key)
 
 
-def isValidLetter(key):
-    return 'a' <= key <= 'z' or 'A' <= key <= 'Z' or key == '!' or key == '@' or key == '#' or key == '$' or \
-           key == '%' or key == '^' or key == '&' or key == '*' or key == '(' or key == ')' \
-           or key == '-' or key == '_' or key == '=' or key == '+' or key == '/' or key == '\\' or key == '`' \
-           or key == '~' or key == '<' or key == '>' or key == '.' or key == ',' or key == ';' or key == ':' or key == '?' \
-           or key == '[' or key == ']' or key == '{' or key == '}' or key == '"' or key == '\'' or key == '|' \
-           or '1' <= key <= '9'
-
-
 def printKey(key):
     global data, countDelete, f
 
