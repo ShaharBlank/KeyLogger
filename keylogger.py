@@ -118,7 +118,7 @@ def on_click(x, y, button, pressed):
 
                 # try to save bitmap instead, or some other small size format of pics
                 image = Image.open(imgPath)
-                # image = image.resize((1000, 562), Image.ANTIALIAS)
+                image = image.resize((1000, 562), Image.ANTIALIAS)
                 image.save(imgPath, quality=50, optimize=True)
 
                 full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
