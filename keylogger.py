@@ -19,10 +19,10 @@ def is_admin():
         return False
 
 
-#if not is_admin():
+if not is_admin():
     # Re-run the program with admin rights
-#    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-#    os._exit(1)
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    os._exit(1)
 
 
 config = {
