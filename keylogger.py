@@ -97,7 +97,7 @@ def printKey(key):
             print('\n')
             f.write('\n')
 
-        elif str(key) == 'Key.backspace' and len(data) > 0:  
+        elif str(key) == 'Key.backspace' and len(data) > 0:
             data = data[:-1]
             f.close()
             f = open('data.txt', 'w', encoding='utf-8')
